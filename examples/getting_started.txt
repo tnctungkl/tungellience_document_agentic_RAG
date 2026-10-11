@@ -1,0 +1,13 @@
+Tungelligence Getting Started Knowledge Base
+
+Company leave policy:
+Employees receive 20 days of annual paid leave per calendar year.
+Leave requests must be submitted through the employee portal.
+Managers are responsible for approving leave requests.
+
+Security policy:
+Passwords must be changed every 90 days.
+Employees must not share passwords with other people.
+
+Product information:
+Tungelligence is a local-first knowledge assistant that works with workspace documents.

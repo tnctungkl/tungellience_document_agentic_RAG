@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Tungelligence Agentic RAG workspace">
+  <title>Tungelligence — Agentic RAG</title>
+  <link rel="stylesheet" href="/ui-static/styles.css?v=1.5.4">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand-row">
+        <div class="brand-mark">T</div>
+        <div>
+          <div class="brand-name">Tungelligence</div>
+          <div class="brand-subtitle">Agentic RAG Workspace</div>
+        </div>
+      </div>
+
+      <button class="new-workspace-button" id="new-workspace-button" type="button">
+        <span>＋</span><span>New workspace</span>
+      </button>
+
+      <div class="sidebar-label">WORKSPACES</div>
+      <div class="workspace-list" id="workspace-list"></div>
+
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-label">CONVERSATIONS</div>
+      <button class="new-conversation-button" id="new-conversation-button" type="button">＋ New conversation</button>
+      <div class="conversation-list" id="conversation-list"></div>
+
+      <div class="sidebar-footer">
+        <div class="status-card">
+          <span class="status-dot" id="health-dot"></span>
+          <div><strong id="health-label">Checking runtime</strong><span>API availability</span></div>
+        </div>
+        <div class="version">Tungelligence v1.5.4 · Local-first</div>
+      </div>
+    </aside>
+
+    <main class="main-panel">
+      <header class="topbar">
+        <div class="topbar-title-group">
+          <button class="mobile-menu" id="mobile-menu" type="button" aria-label="Open navigation">☰</button>
+          <div>
+            <div class="eyebrow">WORKSPACE</div>
+            <h1 id="workspace-title">No workspace selected</h1>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <span class="topbar-badge" id="document-count-badge">0 documents</span>
+          <button class="secondary-top-button" id="rename-workspace-button" type="button" disabled>Rename</button>
+        </div>
+      </header>
+
+      <section class="workspace-view">
+        <div class="workspace-toolbar">
+          <div>
+            <div class="eyebrow">KNOWLEDGE BASE</div>
+            <div class="toolbar-copy">Upload the knowledge you want Tungelligence to understand and work with.</div>
+          </div>
+          <button class="upload-button" id="new-document-button" type="button">
+            <span>＋</span><span>New document</span>
+          </button>
+          <input id="file-input" type="file" accept=".pdf,.docx,.txt,.md,.markdown" multiple hidden>
+        </div>
+
+        <section class="document-area">
+          <div class="document-toolbar">
+            <div class="document-toolbar-copy">
+              <div class="eyebrow">INDEXED DOCUMENTS</div>
+              <span>Select one or more documents to remove them permanently.</span>
+            </div>
+            <button class="danger-button document-delete-selected" id="delete-selected-documents" type="button" disabled>Delete selected</button>
+          </div>
+          <section class="document-strip" id="document-strip">
+            <div class="empty-documents">Create a workspace and add documents to start.</div>
+          </section>
+        </section>
+
+        <section class="workspace-grid">
+          <section class="chat-panel">
+            <div class="conversation-header">
+              <div>
+                <div class="eyebrow">CONVERSATION</div>
+                <h2 id="conversation-title">New conversation</h2>
+              </div>
+              <button class="icon-button" id="clear-conversation" type="button" title="Create a new conversation">＋</button>
+            </div>
+
+            <div class="conversation" id="conversation" aria-live="polite"></div>
+
+            <div class="knowledge-lock hidden" id="knowledge-lock">
+              <div class="lock-icon">⌘</div>
+              <div>
+                <strong>Your workspace is empty.</strong>
+                <span>Upload at least one document before talking to the agent. No LLM request is sent while the workspace has no indexed knowledge.</span>
+              </div>
+            </div>
+
+            <form class="composer" id="query-form">
+              <textarea id="query" maxlength="4000" rows="3" disabled placeholder="Upload documents to start chatting..."></textarea>
+              <div class="composer-footer">
+                <span class="composer-hint" id="composer-hint">Knowledge-grounded conversation · no document, no model request</span>
+                <button class="primary-button" id="ask-button" type="submit" disabled>
+                  <span>Ask agent</span><span class="button-arrow">↗</span>
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <aside class="insights-panel" id="insights-panel">
+            <div class="panel-header">
+              <div><div class="eyebrow">ANALYSIS</div><h2>Latest result</h2></div>
+              <button class="icon-button result-refresh" id="refresh-conversation" type="button" title="Reset this conversation" aria-label="Reset this conversation">↻</button>
+            </div>
+
+            <div class="result-empty" id="result-empty">
+              <div class="empty-orb">✦</div>
+              <p>Complete a grounded request to unlock the report.</p>
+            </div>
+
+            <div class="result-content hidden" id="result-content">
+              <div class="metric-grid">
+                <div class="metric-card"><span>Confidence</span><strong id="confidence-value">—</strong></div>
+                <div class="metric-card"><span>Agent action</span><strong id="action-value">—</strong></div>
+              </div>
+              <div class="answer-block"><div class="section-title">Answer</div><div class="answer-text" id="answer-text"></div></div>
+              <div class="source-block"><div class="section-title">Evidence</div><div id="sources-list" class="sources-list"></div></div>
+              <div class="report-actions">
+                <button class="report-button export-button" id="export-button" type="button" disabled>Export</button>
+                <button class="report-button print-button" id="print-button" type="button" disabled>Print</button>
+              </div>
+              <div class="save-hint">Export saves a PDF to a location you choose. Print opens the standard system printer dialog.</div>
+            </div>
+          </aside>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal hidden" id="delete-document-modal" role="dialog" aria-modal="true" aria-labelledby="delete-document-title">
+    <div class="modal-card modal-card-wide">
+      <div class="modal-kicker danger-kicker">PERMANENT DELETION</div>
+      <h2 id="delete-document-title">Delete selected documents?</h2>
+      <p class="modal-copy">This action cannot be undone. The selected files, their database records, processed chunks, embeddings and derived index data will be permanently removed.</p>
+      <div class="selected-delete-list" id="selected-delete-list"></div>
+      <div class="modal-actions"><button class="secondary-top-button" id="document-delete-cancel" type="button">Cancel</button><button class="danger-button" id="document-delete-confirm" type="button">Continue</button></div>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="delete-conversation-modal" role="dialog" aria-modal="true" aria-labelledby="delete-conversation-title">
+    <div class="modal-card">
+      <div class="modal-kicker danger-kicker">DANGER ZONE</div>
+      <h2 id="delete-conversation-title">Delete conversation?</h2>
+      <p class="modal-copy">This permanently removes the conversation and its message history.</p>
+      <div class="modal-actions"><button class="secondary-top-button" id="conversation-delete-cancel" type="button">Cancel</button><button class="danger-button" id="conversation-delete-confirm" type="button">Delete conversation</button></div>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="workspace-modal" role="dialog" aria-modal="true" aria-labelledby="workspace-modal-title">
+    <div class="modal-card">
+      <div class="modal-kicker">WORKSPACE</div>
+      <h2 id="workspace-modal-title">Create workspace</h2>
+      <input id="workspace-name" maxlength="80" placeholder="e.g. Product Documentation" autocomplete="off">
+      <div class="modal-actions"><button class="secondary-top-button" id="modal-cancel" type="button">Cancel</button><button class="primary-button" id="modal-submit" type="button">Create</button></div>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="delete-workspace-modal" role="dialog" aria-modal="true" aria-labelledby="delete-workspace-title">
+    <div class="modal-card">
+      <div class="modal-kicker danger-kicker">DANGER ZONE</div>
+      <h2 id="delete-workspace-title">Delete workspace?</h2>
+      <p class="modal-copy">This permanently removes the workspace, its documents, indexes, conversations and chat history.</p>
+      <div class="modal-actions"><button class="secondary-top-button" id="delete-cancel" type="button">Cancel</button><button class="danger-button" id="delete-confirm" type="button">Delete workspace</button></div>
+    </div>
+  </div>
+
+  <div class="loading-overlay hidden" id="delete-loading" role="status" aria-live="polite" aria-busy="true">
+    <div class="loading-card cyberpunk-panel deletion-loading-card">
+      <div class="scanline"></div>
+      <div class="loading-kicker delete-loading-kicker">TUNGELLIGENCE // PURGE SEQUENCE</div>
+      <div class="loading-orbit" aria-hidden="true"><i class="loading-ring ring-red"></i><i class="loading-ring ring-yellow"></i><i class="loading-ring ring-blue"></i><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div>
+      <h2>REMOVING KNOWLEDGE</h2>
+      <p class="loading-subtitle">Please wait. Selected documents and their derived records are being permanently removed.</p>
+      <div class="upload-file-list" id="delete-file-list"></div>
+      <div class="loading-stage" id="delete-stage">Removing selected document records...</div>
+      <div class="loading-progress"><span></span></div>
+      <div class="loading-terminal"><span class="terminal-prompt">›</span><span id="delete-loading-text">Purging files, chunks and index references...</span><span class="terminal-caret">_</span></div>
+      <small>FILE · DATABASE · CHUNKS · EMBEDDINGS · INDEX</small>
+    </div>
+  </div>
+  <div class="modal hidden" id="delete-success-modal" role="dialog" aria-modal="true" aria-labelledby="delete-success-title">
+    <div class="modal-card">
+      <div class="modal-kicker">OPERATION COMPLETE</div>
+      <h2 id="delete-success-title">Deletion completed</h2>
+      <p class="modal-copy" id="delete-success-copy"></p>
+      <div class="modal-actions"><button class="primary-button" id="delete-success-continue" type="button">Continue</button></div>
+    </div>
+  </div>
+
+<div class="loading-overlay hidden" id="upload-loading" role="status" aria-live="polite" aria-busy="true">
+    <div class="loading-card cyberpunk-panel">
+      <div class="scanline"></div>
+      <div class="loading-kicker">TUNGELLIGENCE // INGESTION CORE</div>
+      <div class="loading-orbit" aria-hidden="true"><i class="loading-ring ring-red"></i><i class="loading-ring ring-yellow"></i><i class="loading-ring ring-blue"></i><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div>
+      <h2>UPLOAD SEQUENCE ACTIVE</h2>
+      <p class="loading-subtitle">Please wait. Tungelligence is preparing your knowledge base.</p>
+      <div class="upload-file-list" id="upload-file-list"></div>
+      <div class="loading-stage" id="upload-stage">Initializing ingestion...</div>
+      <div class="loading-progress"><span></span></div>
+      <div class="loading-terminal"><span class="terminal-prompt">›</span><span id="upload-loading-text">Connecting to ingestion pipeline...</span><span class="terminal-caret">_</span></div>
+      <small>UPLOAD · EXTRACT · CLEAN · CHUNK · EMBED · INDEX</small>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="/ui-static/app.js?v=1.5.4" defer></script>
+</body>
+</html>

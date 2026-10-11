@@ -1,0 +1,36 @@
+# Source-control metadata and CI configuration
+.git
+.github
+
+# Local settings and secrets
+.env
+.env.*
+
+# Runtime data must never be baked into an image layer
+data/
+**/*.db
+**/*.db-*
+**/*.sqlite
+**/*.sqlite3
+**/*.sqlite-*
+**/*.sqlite3-*
+**/*.log
+
+# Python environments / caches
+.venv/
+venv/
+env/
+**/__pycache__/
+**/*.py[cod]
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Local development artifacts
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

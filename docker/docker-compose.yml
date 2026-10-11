@@ -1,0 +1,31 @@
+services:
+  rag-api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    env_file:
+      - ../.env
+    environment:
+      # Containers reach Ollama through the private Compose network.
+      LLM_BASE_URL: http://ollama:11434
+    ports:
+      # The demo has no authentication; publish it to loopback only.
+      - "127.0.0.1:8000:8000"
+    volumes:
+      # Runtime data stays on the host and is never copied into the image build context.
+      - ../data:/app/data
+    depends_on:
+      - ollama
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    # No host port is published. The API reaches this service internally.
+    expose:
+      - "11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+
+volumes:
+  ollama_data:
