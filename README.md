@@ -272,7 +272,5 @@ Distributed under the MIT License. See [LICENSE](LICENSE).
 
 ## Author and related work
 
-**Tunç KUL — Computer Engineer**  
-GitHub: [@tnctungkl](https://github.com/tnctungkl)
-
-Related portfolio project: [Sentiment End-to-End MLOps](https://github.com/tnctungkl/sentiment_EndtoEnd_MLOps), which demonstrates a separate end-to-end machine-learning service and MLOps workflow.
+        **Tunç KUL**
+    **Computer Engineer** 
